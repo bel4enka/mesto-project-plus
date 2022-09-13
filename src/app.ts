@@ -1,10 +1,10 @@
-import express, { NextFunction, Response, Request } from 'express';
+import express, { NextFunction, Response } from 'express';
 import mongoose from 'mongoose';
 import routes from './routes';
 import { IUserRequest } from './services/interface';
 import errorsHandler from './middlewares/error-handler';
 
-// Слушаем 3000 порт
+// Слушаем 3001 порт
 const { PORT = 3001 } = process.env;
 
 const app = express();
@@ -15,7 +15,6 @@ app.use((req: IUserRequest, res: Response, next: NextFunction) => {
   req.user = {
     _id: '631b5097f4ce9d83035add27',
   };
-
   next();
 });
 

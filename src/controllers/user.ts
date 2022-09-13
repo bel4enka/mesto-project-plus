@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import User from '../models/user';
 import { IUserRequest } from '../services/interface';
-import { NotFoundError } from '../errors/notFoundError';
-import { BadRequestError } from '../errors/BadRequestError';
+import NotFoundError from '../errors/notFoundError';
+import BadRequestError from '../errors/BadRequestError';
 
 export const createUser = (req: Request, res: Response, next: NextFunction) => {
   const user = {
@@ -12,8 +12,11 @@ export const createUser = (req: Request, res: Response, next: NextFunction) => {
   };
   return User.create(user)
     .then((newUser) => res.send(newUser))
-    .catch(() => {
-      next(new BadRequestError('Некорректные данные'));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Некорректные данные'));
+      }
+      return next(err);
     });
 };
 
@@ -26,8 +29,11 @@ export const getUserById = (req: Request, res: Response, next: NextFunction) => 
   User.findById(req.params.id)
     .orFail(() => new NotFoundError('Нет такого пользователя'))
     .then((user) => res.send({ data: user }))
-    .catch(() => {
-      next(new NotFoundError('Нет такого пользователя'));
+    .catch((err) => {
+      if (err) {
+        next(new NotFoundError('Пользователь не найдена'));
+      }
+      return next(err);
     });
 };
 export const updateUser = (req: Request, res: Response, next: NextFunction) => {
@@ -37,8 +43,11 @@ export const updateUser = (req: Request, res: Response, next: NextFunction) => {
   })
     .orFail(() => new NotFoundError('Нет такого пользователя'))
     .then((user) => res.send(user))
-    .catch(() => {
-      next(new BadRequestError('Некорректные данные'));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Нет такого пользователя'));
+      }
+      return next(err);
     });
 };
 export const updateAvatar = (req: Request, res: Response, next: NextFunction) => {
@@ -46,8 +55,12 @@ export const updateAvatar = (req: Request, res: Response, next: NextFunction) =>
     new: true,
     runValidators: true,
   })
+    .orFail(() => new NotFoundError('Нет такого пользователя'))
     .then((user) => res.send(user))
-    .catch(() => {
-      next(new BadRequestError('Некорректные данные'));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Нет такого пользователя'));
+      }
+      return next(err);
     });
 };

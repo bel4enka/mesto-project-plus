@@ -4,7 +4,7 @@ import {
   NextFunction,
 } from 'express';
 import mongoose from 'mongoose';
-import { NotFoundError } from './notFoundError';
+import NotFoundError from './notFoundError';
 
 const validationObjectId = (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;

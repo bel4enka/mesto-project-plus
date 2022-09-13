@@ -8,11 +8,6 @@ const cardsSchema = new mongoose.Schema<ICard>({
     maxlength: 20,
     required: true,
   },
-  text: {
-    type: String,
-    minlength: 2,
-    required: true,
-  },
   link: {
     type: String,
     required: true,
