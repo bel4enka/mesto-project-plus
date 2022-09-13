@@ -3,7 +3,6 @@ import { ObjectId } from 'mongoose';
 
 export interface ICard {
   name: string,
-  text: string,
   link: string,
   owner: ObjectId,
   likes: ObjectId,

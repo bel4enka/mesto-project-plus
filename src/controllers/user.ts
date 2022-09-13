@@ -14,7 +14,7 @@ export const createUser = (req: Request, res: Response, next: NextFunction) => {
     .then((newUser) => res.send(newUser))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Некорректные данные'));
+        return next(new BadRequestError('Некорректные данные'));
       }
       return next(err);
     });
@@ -30,8 +30,11 @@ export const getUserById = (req: Request, res: Response, next: NextFunction) => 
     .orFail(() => new NotFoundError('Нет такого пользователя'))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err) {
-        next(new NotFoundError('Пользователь не найдена'));
+      if (err.name === 'CastError') {
+        return next(new NotFoundError('Пользователь не найден'));
+      }
+      if (err.name === 'ValidationError') {
+        return next(new BadRequestError('Некорректные данные'));
       }
       return next(err);
     });
@@ -45,7 +48,10 @@ export const updateUser = (req: Request, res: Response, next: NextFunction) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Нет такого пользователя'));
+        return next(new BadRequestError('Нет такого пользователя'));
+      }
+      if (err.name === 'ValidationError') {
+        return next(new BadRequestError('Некорректные данные'));
       }
       return next(err);
     });
@@ -59,7 +65,10 @@ export const updateAvatar = (req: Request, res: Response, next: NextFunction) =>
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Нет такого пользователя'));
+        return next(new BadRequestError('Нет такого пользователя'));
+      }
+      if (err.name === 'ValidationError') {
+        return next(new BadRequestError('Некорректные данные'));
       }
       return next(err);
     });
