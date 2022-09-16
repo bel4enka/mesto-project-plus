@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import {
-  createUser,
+  getMyUser,
   getUserById,
   getUsers, updateAvatar, updateUser,
 } from '../../controllers/user';
@@ -8,8 +8,8 @@ import validationObjectId from '../../errors/validationObjectId';
 
 const router = Router();
 
-router.post('/', createUser);
 router.get('/', getUsers);
+router.get('/me', getMyUser);
 router.get('/:id', validationObjectId, getUserById);
 router.patch('/me', updateUser);
 router.patch('/me/avatar', updateAvatar);

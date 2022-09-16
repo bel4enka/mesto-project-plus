@@ -6,11 +6,11 @@ import BadRequestError from '../errors/BadRequestError';
 
 const { Types } = require('mongoose');
 
-export const createCard = (req: Request, res: Response, next: NextFunction) => {
+export const createCard = (req: IUserRequest, res: Response, next: NextFunction) => {
   const card = {
     name: req.body.name,
     link: req.body.link,
-    owner: (req as IUserRequest).user!._id,
+    owner: req!.user?._id,
   };
   return Cards.create(card)
     .then((newUser) => res.send(newUser))
