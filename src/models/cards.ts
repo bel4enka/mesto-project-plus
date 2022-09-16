@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { ICard } from '../services/interface';
+import urlRegexp from '../helpers/regexp';
 
 const cardsSchema = new mongoose.Schema<ICard>({
   name: {
@@ -11,6 +12,10 @@ const cardsSchema = new mongoose.Schema<ICard>({
   link: {
     type: String,
     required: true,
+    validate: {
+      validator: (v: string) => urlRegexp.test(v),
+      message: 'Некорректная ссылка',
+    },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,

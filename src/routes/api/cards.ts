@@ -4,11 +4,13 @@ import {
   getCardById,
   getCards, likeCard,
 } from '../../controllers/cards';
-import validationObjectId from '../../errors/validationObjectId';
+import {
+  validationCard, validationObjectId,
+} from '../../errors/validation';
 
 const router = Router();
 
-router.post('/', createCard);
+router.post('/', validationCard, createCard);
 router.get('/', getCards);
 router.get('/:id', validationObjectId, getCardById);
 router.delete('/:id', validationObjectId, deleteCard);
