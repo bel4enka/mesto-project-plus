@@ -5,6 +5,7 @@ import User from '../models/user';
 import { IUserRequest } from '../services/interface';
 import NotFoundError from '../errors/notFoundError';
 import BadRequestError from '../errors/BadRequestError';
+import ConflictError from '../errors/ConflictError';
 
 export const createUser = (req: Request, res: Response, next: NextFunction) => {
   const {
@@ -28,7 +29,7 @@ export const createUser = (req: Request, res: Response, next: NextFunction) => {
     })
     .catch((err) => {
       if (err.code === 11000) {
-        return next(new BadRequestError('Такой email уже зарегистрирован'));
+        return next(new ConflictError('Такой email уже зарегистрирован'));
       }
       if (err.name === 'ValidationError') {
         return next(new BadRequestError('Некорректные данные'));
