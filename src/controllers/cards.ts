@@ -44,24 +44,30 @@ export const getCardById = (req: Request, res: Response, next: NextFunction) => 
     });
 };
 export const deleteCard = (req: Request, res: Response, next: NextFunction) => {
-  Cards.deleteOne({ _id: req.params.id })
-    .orFail(new NotFoundError('Нет такой карточки'))
-    .then((data) => {
-      if (data.deletedCount === 0) {
+  const cardId = req.params.id;
+  const userId = (req as IUserRequest).user?._id;
+  Cards.findById(cardId)
+    .then((card) => {
+      if (!card) {
         throw new NotFoundError('Нет такой карточки');
       }
-      res.send({ message: 'Карточка удалена' });
+      if (card.owner.toString() === userId) {
+        card.remove()
+          .then(() => res.send({ message: 'Карточка удалена!' }))
+          .catch(next);
+      } else {
+        next(new BadRequestError('Вы не автор карточки, удалить невозможно'));
+      }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return next(new NotFoundError('Нет такой карточки'));
+        next(new NotFoundError('Нет такой карточки'));
+        return;
       }
-      if (err.name === 'ValidationError') {
-        return next(new BadRequestError('Некорректные данные'));
-      }
-      return next(err);
+      next(err);
     });
 };
+
 export const likeCard = (req: IUserRequest, res: Response, next: NextFunction) => {
   Cards.findByIdAndUpdate(
     req.params.id,
